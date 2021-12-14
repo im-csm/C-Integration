@@ -1,13 +1,14 @@
 #include <iostream>
 #include <string>
 #include <math.h>
+#include <enemy.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/System.hpp>
 
 // Function Prototypes
-float calcTheta(float mouse_x, float mouse_y, float &theta);
+//float calcTheta(float mouse_x, float mouse_y);
 
 int main()
 {
@@ -16,6 +17,9 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(window_w, window_h), "Circle Shooter");
 	window.setMouseCursorVisible(true);
 	window.setFramerateLimit(60);
+
+	// Game clock started
+	//sf::Clock game_time;
 
 	// The hero of the adventure
 	sf::CircleShape hero(25.f);
@@ -29,29 +33,41 @@ int main()
 	gun.setOrigin(gun.getLocalBounds().width / 2, gun.getLocalBounds().height + 6);
 	gun.setPosition(hero.getPosition().x, hero.getPosition().y);
 	
-	//Gun Tip ** COMING BACK TO THIS **
 	/*
-	sf::RectangleShape tip(sf::Vector2f(5.f, 2.f));
-	tip.setFillColor(sf::Color::Color(253, 177, 24));
-	tip.setOrigin(2.5, 1.f);
-	tip.setPosition(window_w / 2, window_h / 2);
+	//Gun Tip
+	sf::RectangleShape gunTip(sf::Vector2f(20.f, 50.f));
+	//gunTip.setFillColor(sf::Color::Color(253, 177, 24));
+	gunTip.setFillColor(sf::Color::White);
+	gunTip.setPosition(window_w / 2, window_h / 2);
+	//tip.setOrigin(tip.getSize().x / 2.f, tip.getSize().y /2 );
+	//tip.setPosition(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
 	*/
+
+	// Enemy creation
+	//srand(time(0));
+	//int randomPosX = rand() % static_cast<int>(window_w);
+	//int randomPosY = rand() % static_cast<int>(window_h);
+	//sf::CircleShape enemy1(35.f);
+	//enemy1.setFillColor(sf::Color::Red);
+	//enemy1.setOrigin(enemy1.getRadius(), enemy1.getRadius());
+	//enemy1.setPosition(randomPosX, randomPosY);
 
 		
 	// Event obect
 	sf::Event ev;
-
 	
 	// Main loop
 	while (window.isOpen())
 	{
+		// Gather time elapsed
+		sf::Time elapsed = game_time.getElapsedTime();
+
 		// Variables
 		float mouseX = sf::Mouse::getPosition(window).x;
 		float mouseY = sf::Mouse::getPosition(window).y;
 		
 		// Gun Rotation Logic
 		float rotation = 0;
-		float* theta = &rotation;
 		
 		// Loop checks for an event
 		while (window.pollEvent(ev))
@@ -64,10 +80,10 @@ int main()
 				break;
 				
 			case sf::Event::MouseButtonPressed:
-				//std::cout << "Hero x: " << hero.getPosition().x << " Hero y: " << hero.getPosition().y << "\n";
 				std::cout << "Mouse X pos: " << mouseX << "Mouse Y pos: " << mouseY << "\n";
 				std::cout << "Current Rotation = " << rotation << "\n";
-				std::cout << "Theta = " << calcTheta(mouseX, mouseY, *theta) << "\n";
+				std::cout << "Time elapsed since game started: " << elapsed.asSeconds() << "\n";
+				//std::cout << "Theta = " << calcTheta(mouseX, mouseY) << "\n";
 				std::cout << "\n";
 				break;
 
@@ -79,52 +95,14 @@ int main()
 		// Clears current frame
 		window.clear();
 
-		
-		
-		// REDUNDANT - FIX SO ONLY CALCTHETA() IS NEEDED TO CHECK QUADRANT
 		// Update Rotation of gun to point towards the mouse
-		// Quadrant 1
-		if (mouseX == 400 && mouseY < 300)
-			gun.setRotation(0);
-		if (mouseX > 400 && mouseY < 300)
-		{
-			rotation = calcTheta(mouseX, mouseY, *theta);
-			gun.setRotation(rotation);
-			//tip.setRotation(gun.getRotation());
-		}
-		// Quadrant 2
-		if (mouseX > 400 && mouseY == 300)
-			gun.setRotation(90);
-		if (mouseX > 400 && mouseY > 300)
-		{
-			rotation = 90 + calcTheta(mouseX, mouseY, *theta);
-			gun.setRotation(rotation);
-			//tip.setRotation(gun.getRotation());
-		}
-		// Quadrant 3
-		if (mouseX == 400 && mouseY > 300)
-			gun.setRotation(180);
-		if (mouseX < 400 && mouseY > 300)
-		{
-			rotation = 180 + calcTheta(mouseX, mouseY, *theta);
-			gun.setRotation(rotation);
-			//tip.setRotation(gun.getRotation());
-		}
-		// Quadrant 4
-		if (mouseX < 400 && mouseY == 300)
-			gun.setRotation(270);
-		if (mouseX < 400 && mouseY < 300)
-		{
-			rotation = 270 + calcTheta(mouseX, mouseY, *theta);
-			gun.setRotation(rotation);
-			//tip.setRotation(gun.getRotation());
-		}
+		//rotation = calcTheta(mouseX, mouseY);
+		//gun.setRotation(rotation);
 
 		// Draw shapes to the screen for new frame
 		window.draw(hero);
 		window.draw(gun);
-		//window.draw(tip);
-
+		//window.draw(enemy1);
 
 		// Display new window frame
 		window.display();
@@ -136,37 +114,22 @@ int main()
 
 // Function Defs
 
-float calcTheta(float mouse_x, float mouse_y, float &theta)
+float calcTheta(float mouse_x, float mouse_y)
 {
-	float new_theta = theta;
+	float theta;
 	// Quadrant 1
 	if (mouse_x > 400 && mouse_y < 300)
-	{
-		new_theta = atan((mouse_x - 400) / (300 - mouse_y));
-		new_theta *= (180 / 3.14);
-	}
-
+		theta = atan((mouse_x - 400) / (300 - mouse_y) * (180 / 3.14));
 	// Quadrant 2
 	if (mouse_x > 400 && mouse_y > 300)
-	{
-		new_theta = atan((mouse_y - 300) / (mouse_x - 400));
-		new_theta *= (180 / 3.14);
-	}
-
+		theta = atan((mouse_y - 300) / (mouse_x - 400) * (180 / 3.14));
 	// Quadrant 3
 	if (mouse_x < 400 && mouse_y > 300)
-	{
-		new_theta = atan((400 - mouse_x) / (mouse_y - 300));
-		new_theta *= (180 / 3.14);
-	}
-
+		theta = atan((400 - mouse_x) / (mouse_y - 300) * (180 / 3.14));
 	// Quadrant 4
 	if (mouse_x < 400 && mouse_y < 300)
-	{
-		new_theta = atan((300 - mouse_y) / (400 - mouse_x));
-		new_theta *= (180 / 3.14);
-	}
-	return new_theta;
+		theta = atan((300 - mouse_y) / (400 - mouse_x)) * (180 / 3.14);
+	return theta;
 }
 
 
