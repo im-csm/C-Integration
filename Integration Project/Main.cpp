@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <math.h>
-#include "Automobile.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Audio.hpp>
@@ -40,21 +39,22 @@ int main()
 	//tip.setPosition(window_h / 2.f, window_w / 2.f);
 	*/
 
+	// Variables
+	float mouseX = sf::Mouse::getPosition(window).x;
+	float mouseY = sf::Mouse::getPosition(window).y;
+		
+	// Event obect
+	sf::Event ev;
+
+	// Gun Rotation Logic
+	float rotation = 0;
+	float* theta = &rotation;
+	
 	// Main loop
 	while (window.isOpen())
 	{
 		
-		// Variables
-		float mouseX = sf::Mouse::getPosition(window).x;
-		float mouseY = sf::Mouse::getPosition(window).y;
 
-		// Gun Rotation Logic
-		float rotation = 0;
-		float* theta = &rotation;
-		
-
-		// Event obect
-		sf::Event ev;
 		
 		// Loop checks for an event
 		while (window.pollEvent(ev))
