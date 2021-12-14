@@ -7,25 +7,22 @@
 #include <SFML/Audio.hpp>
 #include <SFML/System.hpp>
 
-float calculateTheta(float x_diff, float y_diff);
+// Function Prototypes
+float calcTheta(float mouse_x, float mouse_y, float &theta);
 
 int main()
 {
 	// Create Window
-	int window_h = 800, window_w = 600;
-	sf::RenderWindow window(sf::VideoMode(window_h, window_w), "Integration Project");
+	float window_w = 800.f, window_h = 600.f;
+	sf::RenderWindow window(sf::VideoMode(window_w, window_h), "Circle Shooter");
 	window.setMouseCursorVisible(true);
 	window.setFramerateLimit(60);
 
-
-	// The hero of the adventure. A cyan circle standing in the middle of the apocalypse.
-	// Defend your glory or perish.
+	// The hero of the adventure
 	sf::CircleShape hero(25.f);
 	hero.setFillColor(sf::Color::Cyan);
-	hero.setOrigin(hero.getRadius(), hero.getRadius());
-	hero.setPosition(sf::Vector2f(window_h / 2.f, window_w / 2.f));
-	auto heroBounds = hero.getTextureRect();
-
+	hero.setOrigin(hero.getRadius(), hero.getRadius());				// Origin set to center of itself
+	hero.setPosition(sf::Vector2f(window_w / 2.f, window_h / 2.f));	// Hero origin @ (400, 300)
 
 	// Gun
 	sf::RectangleShape gun(sf::Vector2f(7.f, 25.f));
@@ -48,66 +45,13 @@ int main()
 	{
 		
 		// Variables
-		auto mouseX = sf::Mouse::getPosition(window).x;
-		auto mouseY = sf::Mouse::getPosition(window).y;
+		float mouseX = sf::Mouse::getPosition(window).x;
+		float mouseY = sf::Mouse::getPosition(window).y;
 
 		// Gun Rotation Logic
-		float x_diff_left  = hero.getPosition().x - mouseX;
-		float x_diff_right = mouseX - hero.getPosition().x;
-		float y_diff_above = hero.getPosition().y - mouseY;
-		float y_diff_below = mouseY - hero.getPosition().y;
 		float rotation = 0;
-		/*
-		// Quadrant 1
-		if (sf::Mouse::getPosition(window).x > 400 && sf::Mouse::getPosition(window).y < 300)
-		{
-			oldRotation = rotation;
-			rotation_diff = calculateTheta(x_diff_right, y_diff_above) - oldRotation;
-			rotation += rotation_diff;
-		}
-		// Quadrant 2
-		if (sf::Mouse::getPosition(window).x > 400 && sf::Mouse::getPosition(window).y > 300)
-		{
-			oldRotation = rotation;
-			rotation = calculateTheta(x_diff_right, y_diff_below) - oldRotation;
-			rotation += rotation_diff;
-		}
-		// Quadrant 3
-		if (sf::Mouse::getPosition(window).x < 400 && sf::Mouse::getPosition(window).y > 300)
-		{
-			oldRotation = rotation;
-			rotation = calculateTheta(x_diff_left, y_diff_below) - oldRotation;
-			rotation += rotation_diff;
-		}
-		// Quadrant 4
-		if (sf::Mouse::getPosition(window).x < 400 && sf::Mouse::getPosition(window).y < 300)
-		{
-			oldRotation = rotation;
-			rotation = calculateTheta(x_diff_left, y_diff_above) - oldRotation;
-			rotation += rotation_diff;
-		}
-		*/
+		float* theta = &rotation;
 		
-		// Quadrant 1
-		if (mouseX > 400 && mouseY < 300) 
-		{
-			rotation = calculateTheta(x_diff_right, y_diff_above);
-		}
-		// Quadrant 2
-		if (mouseX > 400 && mouseY > 300)
-		{
-			rotation = calculateTheta(x_diff_right, y_diff_below);
-		}
-		// Quadrant 3
-		if (mouseX < 400 && mouseY > 300)
-		{
-			rotation = calculateTheta(x_diff_left, y_diff_below);
-		}
-		// Quadrant 4
-		if (mouseX < 400 && mouseY < 300)
-		{
-			rotation = calculateTheta(x_diff_left, y_diff_above);
-		}
 
 		// Event obect
 		sf::Event ev;
@@ -125,16 +69,15 @@ int main()
 				break;
 				
 			case sf::Event::MouseButtonPressed:
+				//std::cout << "Hero x: " << hero.getPosition().x << " Hero y: " << hero.getPosition().y << "\n";
 				std::cout << "Mouse X pos: " << mouseX << "Mouse Y pos: " << mouseY << "\n";
-				//std::cout << "x: " << gun.getPosition().x << " y: " << gun.getPosition().y << "\n";
-				std::cout << "Hero x: " << hero.getPosition().x << " Hero y: " << hero.getPosition().y << "\n";
-				std::cout << "X diff left: " << x_diff_left << " X diff right: " << x_diff_right << "\n" << "Y diff below = " << y_diff_below << " Y diff aboe = " << y_diff_above << "\n";
-				std::cout << "Rotation change = " << rotation << "\n";
+				std::cout << "Current Rotation = " << rotation << "\n";
+				std::cout << "Theta = " << calcTheta(mouseX, mouseY, *theta) << "\n";
 				std::cout << "\n";
-				std::cout << "Theta Q1: " << rotation << "\n";
-				std::cout << "Theta Q2: " << rotation << "\n";
-				std::cout << "Theta Q3: " << rotation << "\n";
-				std::cout << "Theta Q4: " << rotation << "\n";
+				//std::cout << "Theta Q1: " << rotation << "\n";
+				//std::cout << "Theta Q2: " << rotation << "\n";
+				//std::cout << "Theta Q3: " << rotation << "\n";
+				//std::cout << "Theta Q4: " << rotation << "\n";
 				break;
 
 			default:
@@ -146,8 +89,42 @@ int main()
 		// Clears current frame
 		window.clear();
 
-		gun.setRotation(rotation);
-		//std::cout << "Rotation Angle: " << gun.getRotation() << "\n";
+		// Update Rotation of gun to point towards the mouse
+		// Quadrant 1
+		if (mouseX == 400 && mouseY < 300)
+			gun.setRotation(0);
+		if (mouseX > 400 && mouseY < 300)
+		{
+			rotation = calcTheta(mouseX, mouseY, *theta);
+			gun.setRotation(rotation);
+		}
+
+		// Quadrant 2
+		if (mouseX > 400 && mouseY == 300)
+			gun.setRotation(90);
+		if (mouseX > 400 && mouseY > 300)
+		{
+			rotation = 90 + calcTheta(mouseX, mouseY, *theta);
+			gun.setRotation(rotation);
+		}
+		
+		// Quadrant 3
+		if (mouseX == 400 && mouseY > 300)
+			gun.setRotation(180);
+		if (mouseX < 400 && mouseY > 300)
+		{
+			rotation = 180 + calcTheta(mouseX, mouseY, *theta);
+			gun.setRotation(rotation);
+		}
+		
+		// Quadrant 4
+		if (mouseX < 400 && mouseY == 300)
+			gun.setRotation(270);
+		if (mouseX < 400 && mouseY < 300)
+		{
+			rotation = 270 + calcTheta(mouseX, mouseY, *theta);
+			gun.setRotation(rotation);
+		}
 
 		// Draw shapes to the screen for new frame
 		window.draw(hero);
@@ -163,23 +140,51 @@ int main()
 	return 0;
 }
 
-float calculateTheta(float x_diff, float y_diff)
+// Function Defs
+
+float calcTheta(float mouse_x, float mouse_y, float &theta)
 {
-	float theta;
-	float TOA = y_diff / x_diff;
-	theta = atan(TOA) * (180 / 3.14159265);
-	return theta;
+	float new_theta = theta;
+	// Quadrant 1
+	if (mouse_x > 400 && mouse_y < 300)
+	{
+		new_theta = atan((mouse_x - 400) / (300 - mouse_y));
+		new_theta *= (180 / 3.14);
+	}
+
+	// Quadrant 2
+	if (mouse_x > 400 && mouse_y > 300)
+	{
+		new_theta = atan((mouse_y - 300) / (mouse_x - 400));
+		new_theta *= (180 / 3.14);
+	}
+
+	// Quadrant 3
+	if (mouse_x < 400 && mouse_y > 300)
+	{
+		new_theta = atan((400 - mouse_x) / (mouse_y - 300));
+		new_theta *= (180 / 3.14);
+	}
+
+	// Quadrant 4
+	if (mouse_x < 400 && mouse_y < 300)
+	{
+		new_theta = atan((300 - mouse_y) / (400 - mouse_x));
+		new_theta *= (180 / 3.14);
+	}
+	return new_theta;
 }
 
-	/*
-	Automobile zoomies;
-	zoomies.setMake("Honda Accord");
-	zoomies.setWheels(4);
-	for (int x = 0; x < 60; x++)
-	{
-		int ZeroTo60 = x;
-		zoomies.Accelerate();
-		cout << "Time since launch: " << ZeroTo60 << " seconds." << "\n";
-		cout << "Current Speed: " << zoomies.getSpeed() << "\n";
-	}
-	*/
+
+/*
+Automobile zoomies;
+zoomies.setMake("Honda Accord");
+zoomies.setWheels(4);
+for (int x = 0; x < 60; x++)
+{
+	int ZeroTo60 = x;
+	zoomies.Accelerate();
+	cout << "Time since launch: " << ZeroTo60 << " seconds." << "\n";
+	cout << "Current Speed: " << zoomies.getSpeed() << "\n";
+}
+*/
