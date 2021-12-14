@@ -33,36 +33,31 @@ int main()
 	/*
 	sf::RectangleShape tip(sf::Vector2f(5.f, 2.f));
 	tip.setFillColor(sf::Color::Color(253, 177, 24));
-	tip.setRotation(gun.getRotation());
 	tip.setOrigin(2.5, 1.f);
-	tip.setPosition(gun.getPosition().x, gun.getPosition().y - 31 );
-	//tip.setPosition(window_h / 2.f, window_w / 2.f);
+	tip.setPosition(window_w / 2, window_h / 2);
 	*/
 
-	// Variables
-	float mouseX = sf::Mouse::getPosition(window).x;
-	float mouseY = sf::Mouse::getPosition(window).y;
 		
 	// Event obect
 	sf::Event ev;
 
-	// Gun Rotation Logic
-	float rotation = 0;
-	float* theta = &rotation;
 	
 	// Main loop
 	while (window.isOpen())
 	{
+		// Variables
+		float mouseX = sf::Mouse::getPosition(window).x;
+		float mouseY = sf::Mouse::getPosition(window).y;
 		
-
+		// Gun Rotation Logic
+		float rotation = 0;
+		float* theta = &rotation;
 		
 		// Loop checks for an event
 		while (window.pollEvent(ev))
 		{
-			
 			switch (ev.type)
 			{
-			
 			// window closed
 			case sf::Event::Closed:
 				window.close();
@@ -74,10 +69,6 @@ int main()
 				std::cout << "Current Rotation = " << rotation << "\n";
 				std::cout << "Theta = " << calcTheta(mouseX, mouseY, *theta) << "\n";
 				std::cout << "\n";
-				//std::cout << "Theta Q1: " << rotation << "\n";
-				//std::cout << "Theta Q2: " << rotation << "\n";
-				//std::cout << "Theta Q3: " << rotation << "\n";
-				//std::cout << "Theta Q4: " << rotation << "\n";
 				break;
 
 			default:
@@ -85,10 +76,12 @@ int main()
 			}
 		}
 		
-		
 		// Clears current frame
 		window.clear();
 
+		
+		
+		// REDUNDANT - FIX SO ONLY CALCTHETA() IS NEEDED TO CHECK QUADRANT
 		// Update Rotation of gun to point towards the mouse
 		// Quadrant 1
 		if (mouseX == 400 && mouseY < 300)
@@ -97,8 +90,8 @@ int main()
 		{
 			rotation = calcTheta(mouseX, mouseY, *theta);
 			gun.setRotation(rotation);
+			//tip.setRotation(gun.getRotation());
 		}
-
 		// Quadrant 2
 		if (mouseX > 400 && mouseY == 300)
 			gun.setRotation(90);
@@ -106,8 +99,8 @@ int main()
 		{
 			rotation = 90 + calcTheta(mouseX, mouseY, *theta);
 			gun.setRotation(rotation);
+			//tip.setRotation(gun.getRotation());
 		}
-		
 		// Quadrant 3
 		if (mouseX == 400 && mouseY > 300)
 			gun.setRotation(180);
@@ -115,8 +108,8 @@ int main()
 		{
 			rotation = 180 + calcTheta(mouseX, mouseY, *theta);
 			gun.setRotation(rotation);
+			//tip.setRotation(gun.getRotation());
 		}
-		
 		// Quadrant 4
 		if (mouseX < 400 && mouseY == 300)
 			gun.setRotation(270);
@@ -124,6 +117,7 @@ int main()
 		{
 			rotation = 270 + calcTheta(mouseX, mouseY, *theta);
 			gun.setRotation(rotation);
+			//tip.setRotation(gun.getRotation());
 		}
 
 		// Draw shapes to the screen for new frame
