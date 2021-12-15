@@ -12,12 +12,12 @@
 class enemy : public sf::Drawable
 {
 public:
-	enemy(int health, float radius, bool isDead)
-	{
-		this->hitpointCount = health;
-		this->radius = radius;
-		this->isDead = isDead;
-	}
+	//enemy(int health, float radius, bool isDead)
+	//{
+	//	this->hitpointCount = health;
+	//	this->radius = radius;
+	//	this->isDead = isDead;
+	//}
 	
 
 
@@ -27,7 +27,6 @@ private:
 	float radius;
 	float size_multiplier;
 	bool isDead;
-	sf::FloatRect hitbox = this->
 };
 
 #endif
