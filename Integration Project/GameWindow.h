@@ -12,7 +12,7 @@
  *    - LO2a. The visibility in this class is public. This allows me to still access public and private members of
  	RenderObject.
  *
- *  @author Your Name
+ *  @author Chance Mullen
  *  @bug No known bugs.
  */
 
