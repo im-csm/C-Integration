@@ -8,11 +8,8 @@
 /** @hero hero.h
  *  @brief Hero class .h file
  *  LO1. Design and implement a class
+ *    - LO1a. There are other classes that utilize .h and .cpp files as well.
  *  
- *  LO4. Procedural/functional programming is using a bunch of functions to
- *       write/control a program. This differs from OOP in that OOP has objects,
- *       and objects have attributes and methods. In short however, OOP is bottom-up
- *	 rather than the top-down approach that procedural programming takes.
  *
  *  @author Chance Mullen
  *  @bug No known bugs.
