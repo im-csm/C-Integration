@@ -4,21 +4,12 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
-/*	LO1.
-	This is my enemy class. This class is what the other enemy types inherit from.
-	This class also inherits from the drawable class from SFML
-*/
 
 class enemy : public sf::Drawable
 {
 public:
-	//enemy(int health, float radius, bool isDead)
-	//{
-	//	this->hitpointCount = health;
-	//	this->radius = radius;
-	//	this->isDead = isDead;
-	//}
-	
+	enemy() : hitpointCount(3), radius(20) {}
+	enemy(sf::Color newColor, float radius, sf::Vector2f spawnPos): color(newColor) {}
 
 
 private:
@@ -27,6 +18,7 @@ private:
 	float radius;
 	float size_multiplier;
 	bool isDead;
+	sf::Color color;
 };
 
 #endif
